@@ -1,0 +1,50 @@
+﻿import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
+import { AccountProfile } from '../models/account.model';
+
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  private tokenKey = 'jwt_token';
+  private userSubject = new BehaviorSubject<AccountProfile | null>(null);
+  user$ = this.userSubject.asObservable();
+
+  constructor(private http: HttpClient, private router: Router) {
+    const token = localStorage.getItem(this.tokenKey);
+    if (token) this.userSubject.next(this.decodeToken(token));
+  }
+
+  login(username: string, password: string): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/account/login`, { username, password }).pipe(
+      tap(res => {
+        localStorage.setItem(this.tokenKey, res.token);
+        this.userSubject.next(this.decodeToken(res.token));
+      })
+    );
+  }
+
+  register(username: string, password: string): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/account/register`, { username, password });
+  }
+
+  logout() {
+    localStorage.removeItem(this.tokenKey);
+    this.userSubject.next(null);
+    this.router.navigate(['/login']);
+  }
+
+  get token() {
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  private decodeToken(token: string): AccountProfile {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return {
+      id: 0,
+      username: payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'],
+      role: payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
+    };
+  }
+}

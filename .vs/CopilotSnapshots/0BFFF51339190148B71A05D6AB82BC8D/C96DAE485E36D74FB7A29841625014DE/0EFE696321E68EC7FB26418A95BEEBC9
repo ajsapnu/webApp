@@ -1,0 +1,27 @@
+﻿<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Employees</h2>
+    <button class="btn btn-success" routerLink="/employees/new">Add Employee</button>
+  </div>
+  <input class="form-control mb-3" placeholder="Search..." [(ngModel)]="search" (input)="onSearch()" />
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>First Name</th><th>Last Name</th><th>Email</th><th>Phone</th><th>Position</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let emp of employees">
+        <td>{{ emp.firstName }}</td>
+        <td>{{ emp.lastName }}</td>
+        <td>{{ emp.email }}</td>
+        <td>{{ emp.phone }}</td>
+        <td>{{ emp.position }}</td>
+        <td>
+          <button class="btn btn-sm btn-primary" [routerLink]="['/employees', emp.id]">Edit</button>
+          <button class="btn btn-sm btn-danger ms-2" (click)="delete(emp.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

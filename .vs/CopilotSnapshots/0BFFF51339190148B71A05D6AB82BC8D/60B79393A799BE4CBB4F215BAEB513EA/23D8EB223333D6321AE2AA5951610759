@@ -1,0 +1,29 @@
+﻿import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
+import { Employee } from '../models/employee.model';
+
+@Injectable({ providedIn: 'root' })
+export class EmployeeService {
+  constructor(private http: HttpClient) {}
+
+  getAll(search: string = '') {
+    return this.http.get<Employee[]>(`${environment.apiUrl}/employee`, { params: { search } });
+  }
+
+  get(id: number) {
+    return this.http.get<Employee>(`${environment.apiUrl}/employee/${id}`);
+  }
+
+  create(employee: Partial<Employee>) {
+    return this.http.post<Employee>(`${environment.apiUrl}/employee`, employee);
+  }
+
+  update(id: number, employee: Partial<Employee>) {
+    return this.http.put(`${environment.apiUrl}/employee/${id}`, employee);
+  }
+
+  delete(id: number) {
+    return this.http.delete(`${environment.apiUrl}/employee/${id}`);
+  }
+}

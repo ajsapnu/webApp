@@ -1,0 +1,58 @@
+﻿import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { EmployeeService } from 'src/app/core/services/employee.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Employee } from 'src/app/core/models/employee.model';
+
+@Component({
+  selector: 'app-employee-form',
+  templateUrl: './employee-form.component.html'
+})
+export class EmployeeFormComponent {
+  employeeForm: FormGroup;
+  isEdit = false;
+  employeeId: number | null = null;
+  error: string | null = null;
+
+  constructor(
+    private fb: FormBuilder,
+    private employeeService: EmployeeService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+    this.employeeForm = this.fb.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      phone: [''],
+      position: ['']
+    });
+
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.isEdit = true;
+        this.employeeId = +id;
+        this.employeeService.get(this.employeeId).subscribe(emp => {
+          this.employeeForm.patchValue(emp);
+        });
+      }
+    });
+  }
+
+  onSubmit() {
+    if (this.employeeForm.invalid) return;
+    const data = this.employeeForm.value;
+    if (this.isEdit && this.employeeId) {
+      this.employeeService.update(this.employeeId, data).subscribe({
+        next: () => this.router.navigate(['/employees']),
+        error: err => this.error = err.error?.message || 'Update failed'
+      });
+    } else {
+      this.employeeService.create(data).subscribe({
+        next: () => this.router.navigate(['/employees']),
+        error: err => this.error = err.error?.message || 'Create failed'
+      });
+    }
+  }
+}

@@ -1,0 +1,50 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace webApp.DTOs
+{
+    public class EmployeeDto
+    {
+        public int Id { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? Phone { get; set; }
+        public string? Position { get; set; }
+    }
+
+    public class EmployeeCreateDto
+    {
+        [Required]
+        [MaxLength(50)]
+        public string FirstName { get; set; } = string.Empty;
+        [Required]
+        [MaxLength(50)]
+        public string LastName { get; set; } = string.Empty;
+        [Required]
+        [MaxLength(100)]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+        [MaxLength(20)]
+        public string? Phone { get; set; }
+        [MaxLength(50)]
+        public string? Position { get; set; }
+    }
+
+    public class EmployeeUpdateDto
+    {
+        [Required]
+        [MaxLength(50)]
+        public string FirstName { get; set; } = string.Empty;
+        [Required]
+        [MaxLength(50)]
+        public string LastName { get; set; } = string.Empty;
+        [Required]
+        [MaxLength(100)]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+        [MaxLength(20)]
+        public string? Phone { get; set; }
+        [MaxLength(50)]
+        public string? Position { get; set; }
+    }
+}
