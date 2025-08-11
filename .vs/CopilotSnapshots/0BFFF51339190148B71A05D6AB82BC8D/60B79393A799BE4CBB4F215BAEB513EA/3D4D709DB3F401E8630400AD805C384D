@@ -1,5 +1,0 @@
-﻿export interface AccountProfile {
-  id: number;
-  username: string;
-  role: string;
-}
